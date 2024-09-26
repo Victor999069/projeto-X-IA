@@ -10,8 +10,10 @@ import os
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
-model = GPTNeoForCausalLM.from_pretrained("EleutherAI/gpt-neo-2.7B").to(device)
+print("Carregando modelo")
+model = GPTNeoForCausalLM.from_pretrained("EleutherAI/gpt-neo-2.7B", torch_dtype=torch.float16).to(device)
 tokenize = GPT2Tokenizer.from_pretrained("EleutherAI/gpt-neo-2.7B")
+print("Modelo carregado")
 
 # def carregar_arquivo():
 #     global contexto_texto
@@ -44,6 +46,7 @@ tokenize = GPT2Tokenizer.from_pretrained("EleutherAI/gpt-neo-2.7B")
 #     doc = Document(caminho)
 #     texto = "\n".join([paragrafo.text for paragrafo in doc.paragraphs])
 #     return texto
+
 def enviar_pergunta():
     pergunta = pergunta_entry.get()
     
@@ -84,11 +87,11 @@ def responder_pergunta_geral(pergunta):
     outputs = model.generate(
         inputs, 
         attention_mask=attention_mask,
-        max_length=50, 
+        max_length=70, 
         num_return_sequences=1, 
-        top_k=50,
+        top_k=30,
         top_p=0.9,
-        do_sample=True,
+        do_sample=False,
         pad_token_id=tokenize.eos_token_id
     )
     
